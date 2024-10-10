@@ -27,9 +27,9 @@ export type RouteHookAbort = () => void
 /**
  * Context provided to route hooks, containing context of previous route and functions for triggering rejections and push/replace to another route.
  */
-type RouteHookContext = {
+type RouteHookContext = CallbackContext & {
   from: ResolvedRoute | null,
-} & CallbackContext
+}
 
 /**
  * Context provided to route hooks, containing context of previous route and functions for triggering rejections, push/replace to another route,

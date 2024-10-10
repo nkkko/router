@@ -395,7 +395,7 @@ test('Props from route can trigger push', async () => {
     path: '/routeA',
     component: echo,
     props: (__, context) => {
-      throw context.push('routeB')
+      throw context.push('/routeB')
     },
   })
 

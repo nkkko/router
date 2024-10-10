@@ -5,7 +5,6 @@ import { createCallbackContext } from '@/services/createCallbackContext'
 import { RouteHookStore } from '@/services/createRouteHookStore'
 import { getAfterRouteHooksFromRoutes, getBeforeRouteHooksFromRoutes } from '@/services/getRouteHooks'
 import { AfterRouteHook, AfterRouteHookResponse, BeforeRouteHook, BeforeRouteHookResponse, RouteHookAbort, RouteHookLifecycle } from '@/types/hooks'
-import { RegisteredRouterPush, RegisteredRouterReplace } from '@/types/register'
 import { ResolvedRoute } from '@/types/resolved'
 import { Routes } from '@/types/route'
 import { RouterPush } from '@/types/routerPush'
@@ -113,8 +112,8 @@ export function createRouteHookRunners<const T extends Routes>(): RouteHookRunne
       const results = allHooks.map(callback => callback(to, {
         from,
         reject,
-        push: push as RegisteredRouterPush,
-        replace: replace as RegisteredRouterReplace,
+        push,
+        replace,
       }))
 
       await Promise.all(results)

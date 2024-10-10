@@ -126,18 +126,7 @@ export function createRouter<const TRoutes extends Routes, const TOptions extend
         throw new Error(`Switch is not exhaustive for before hook response status: ${JSON.stringify(beforeResponse satisfies never)}`)
     }
 
-    try {
-      propStore.setProps(to)
-    } catch (error) {
-      if (error instanceof RouterPushError) {
-        await push(...error.to as Parameters<RouterPush>)
-        return
-      }
-
-      if (error instanceof RouterRejectionError) {
-        setRejection(error.type)
-      }
-    }
+    propStore.setProps(to)
 
     updateRoute(to)
 

@@ -5,21 +5,21 @@ import { RouterPushOptions } from '@/types/routerPush'
 import { isUrl } from '@/types/url'
 
 export type CallbackContext = {
-  reject: RegisteredRouterReject,
-  push: RegisteredRouterPush,
-  replace: RegisteredRouterReplace,
+  reject: (...args: Parameters<RegisteredRouterReject>) => never,
+  push: (...args: Parameters<RegisteredRouterPush>) => never,
+  replace: (...args: Parameters<RegisteredRouterReplace>) => never,
 }
 
 export function createCallbackContext(): CallbackContext {
-  const reject: RegisteredRouterReject = (type) => {
+  const reject: CallbackContext['reject'] = (type) => {
     throw new RouterRejectionError(type)
   }
 
-  const push: RegisteredRouterPush = (...parameters: any[]) => {
+  const push: CallbackContext['push'] = (...parameters: any[]) => {
     throw new RouterPushError(parameters)
   }
 
-  const replace: RegisteredRouterPush = (source: any, paramsOrOptions?: any, maybeOptions?: any) => {
+  const replace: CallbackContext['replace'] = (source: any, paramsOrOptions?: any, maybeOptions?: any) => {
     if (isUrl(source)) {
       const options: RouterPushOptions = paramsOrOptions ?? {}
       throw new RouterPushError([source, { ...options, replace: true }])
