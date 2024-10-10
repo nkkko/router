@@ -16,9 +16,8 @@ test('renders component with sync props', async () => {
     initialUrl: '/',
   })
 
-  await router.initialized
+  await router.start()
 
-  // purposefully not using suspense here to make sure sync props doesn't require suspense
   const root = {
     template: '<RouterView/>',
   }
@@ -47,10 +46,10 @@ test('renders component with async props', async () => {
     initialUrl: '/',
   })
 
-  await router.initialized
+  await router.start()
 
   const root = {
-    template: '<Suspense><RouterView/></Suspense>',
+    template: '<RouterView/>',
   }
 
   const app = mount(root, {
@@ -61,7 +60,7 @@ test('renders component with async props', async () => {
 
   await router.push('echo')
 
-  // needed because of suspense
+  // needed for async props
   await flushPromises()
 
   expect(app.html()).toBe('echo')

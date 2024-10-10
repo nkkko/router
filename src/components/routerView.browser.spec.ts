@@ -19,7 +19,7 @@ test('renders component for initial route', async () => {
     initialUrl: '/',
   })
 
-  await router.initialized
+  await router.start()
 
   const root = {
     template: '<RouterView/>',
@@ -51,7 +51,7 @@ test('renders components for initial route', async () => {
     initialUrl: '/parent/child',
   })
 
-  await router.initialized
+  await router.start()
 
   const root = {
     template: '<RouterView />',
@@ -99,7 +99,7 @@ test('updates components when route changes', async () => {
     },
   })
 
-  await router.initialized
+  await router.start()
 
   expect(app.html()).toBe('Foo')
 
@@ -128,7 +128,7 @@ test('resolves async components', async () => {
   })
 
   const root = {
-    template: '<suspense><RouterView/></suspense>',
+    template: '<RouterView/>',
   }
 
   const app = mount(root, {
@@ -137,7 +137,7 @@ test('resolves async components', async () => {
     },
   })
 
-  await router.initialized
+  await router.start()
   await flushPromises()
 
   expect(app.html()).toBe(helloWorld.template)
@@ -148,7 +148,7 @@ test('Renders the genericRejection component when the initialUrl does not match'
     initialUrl: '/does-not-exist',
   })
 
-  await router.initialized
+  await router.start()
 
   const root = {
     template: '<RouterView/>',
@@ -172,7 +172,7 @@ test('Renders custom genericRejection component when the initialUrl does not mat
     },
   })
 
-  await router.initialized
+  await router.start()
 
   const root = {
     template: '<RouterView/>',
@@ -205,7 +205,7 @@ test('Renders the NotFound component when the router.push does not match', async
     initialUrl: '/',
   })
 
-  await router.initialized
+  await router.start()
 
   const root = {
     template: '<RouterView/>',
@@ -233,7 +233,7 @@ test('Renders the route component when the router.push does match after a reject
     initialUrl: '/does-not-exist',
   })
 
-  await router.initialized
+  await router.start()
 
   const root = {
     template: '<RouterView/>',
@@ -267,7 +267,7 @@ test('Renders the multiple components when using named route views', async () =>
     initialUrl: '/',
   })
 
-  await router.initialized
+  await router.start()
 
   const root = {
     template: `
@@ -308,10 +308,10 @@ test('Binds props and attrs from route', async () => {
     initialUrl: '/',
   })
 
-  await router.initialized
+  await router.start()
 
   const root = {
-    template: '<Suspense><RouterView/></Suspense>',
+    template: '<RouterView/>',
   }
 
   const app = mount(root, {
@@ -325,9 +325,6 @@ test('Binds props and attrs from route', async () => {
   expect(app.html()).toBe('hello')
 
   await router.push('/routeB/world')
-
-  // needed because of suspense
-  await flushPromises()
 
   expect(app.html()).toBe('world')
 })
@@ -355,10 +352,10 @@ test('Updates props and attrs when route params change', async () => {
     initialUrl: '/',
   })
 
-  await router.initialized
+  await router.start()
 
   const root = {
-    template: '<Suspense><RouterView/></Suspense>',
+    template: '<RouterView/>',
   }
 
   const app = mount(root, {
