@@ -3,8 +3,6 @@ import { App } from 'vue'
 import { RouterLink, RouterView } from '@/components'
 import { routerRejectionKey } from '@/compositions/useRejection'
 import { routerInjectionKey } from '@/compositions/useRouter'
-import { RouterPushError } from '@/errors/routerPushError'
-import { RouterRejectionError } from '@/errors/routerRejectionError'
 import { createCurrentRoute } from '@/services/createCurrentRoute'
 import { createIsExternal } from '@/services/createIsExternal'
 import { createMaybeRelativeUrl } from '@/services/createMaybeRelativeUrl'
@@ -72,6 +70,8 @@ export function createRouter<const TRoutes extends Routes, const TOptions extend
     listener: ({ location }) => {
       const url = createPath(location)
 
+      console.log('inside listener', url)
+
       set(url, { state: location.state })
     },
   })
@@ -88,6 +88,7 @@ export function createRouter<const TRoutes extends Routes, const TOptions extend
   } = createRouterHooks()
 
   async function set(url: string, options: RouterUpdateOptions = {}): Promise<void> {
+    console.log('setting url ', url)
     history.stopListening()
 
     if (isExternal(url)) {
@@ -135,7 +136,7 @@ export function createRouter<const TRoutes extends Routes, const TOptions extend
     switch (afterResponse.status) {
       case 'PUSH':
         await push(...afterResponse.to)
-        break
+        return
 
       case 'REJECT':
         setRejection(afterResponse.type)

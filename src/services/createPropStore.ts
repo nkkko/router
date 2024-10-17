@@ -1,4 +1,6 @@
 import { InjectionKey, reactive } from 'vue'
+import { RouterPushError } from '@/errors/routerPushError'
+import { RouterRejectionError } from '@/errors/routerRejectionError'
 import { CallbackContext, createCallbackContext } from '@/services/createCallbackContext'
 import { isWithComponent, isWithComponents } from '@/types/createRouteOptions'
 import { ResolvedRoute } from '@/types/resolved'
@@ -6,7 +8,7 @@ import { Route } from '@/types/route'
 
 export const propStoreKey: InjectionKey<PropStore> = Symbol()
 
-type ComponentProps = { id: string, name: string, props?: (params: Record<string, unknown>) => unknown }
+type ComponentProps = { id: string, name: string, props?: (params: Record<string, unknown>, context: CallbackContext) => unknown }
 type PropStoreEntry = { prefetched: boolean, value: unknown }
 
 export type PropStore = {
@@ -16,6 +18,7 @@ export type PropStore = {
 }
 
 export function createPropStore(): PropStore {
+  const context = createCallbackContext()
   const store: Map<string, PropStoreEntry> = reactive(new Map())
 
   const prefetchProps: PropStore['prefetchProps'] = (route) => {
@@ -25,7 +28,7 @@ export function createPropStore(): PropStore {
       .forEach(({ id, name, props }) => {
         if (props) {
           const key = getPropKey(id, name, route.params)
-          const value = props(route.params, context)
+          const value = executeProps(() => props(route.params, context))
 
           store.set(key, { prefetched: true, value })
         }
@@ -41,7 +44,7 @@ export function createPropStore(): PropStore {
 
       const key = getPropKey(id, name, route.params)
       const existingKey = store.get(key)
-      const value = existingKey?.prefetched ? existingKey.value : props(route.params)
+      const value = existingKey?.prefetched ? existingKey.value : executeProps(() => props(route.params, context))
 
       store.set(key, { prefetched: false, value })
 
@@ -59,6 +62,18 @@ export function createPropStore(): PropStore {
 
   function getPropKey(id: string, name: string, params: unknown): string {
     return `${id}-${name}-${JSON.stringify(params)}`
+  }
+
+  function executeProps<T extends() => any>(props: T): ReturnType<T> | RouterRejectionError | RouterPushError {
+    try {
+      return props()
+    } catch (error) {
+      if (error instanceof RouterPushError || error instanceof RouterRejectionError) {
+        return error
+      }
+
+      throw error
+    }
   }
 
   function getComponentProps(options: Route['matched']): ComponentProps[] {

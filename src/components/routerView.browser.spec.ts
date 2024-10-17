@@ -385,12 +385,12 @@ test('Updates props and attrs when route params change', async () => {
   expect(app.html()).toBe('async-bar')
 })
 
-test('Props from route can trigger push', async () => {
+test.only('Props from route can trigger push', async () => {
 
   const routeA = createRoute({
     name: 'routeA',
     path: '/routeA',
-    component: echo,
+    component: { template: 'routeA' },
     props: (__, context) => {
       throw context.push('/routeB')
     },
@@ -399,20 +399,17 @@ test('Props from route can trigger push', async () => {
   const routeB = createRoute({
     name: 'routeB',
     path: '/routeB',
-    component: echo,
-    props: () => ({
-      value: 'routeB',
-    }),
+    component: { template: 'routeB' },
   })
 
   const router = createRouter([routeA, routeB], {
     initialUrl: '/',
   })
 
-  await router.initialized
+  await router.start()
 
   const root = {
-    template: '<Suspense><RouterView/></Suspense>',
+    template: '<RouterView/>',
   }
 
   const app = mount(root, {
@@ -434,7 +431,7 @@ test('Props from route can trigger reject', async () => {
   const routeA = createRoute({
     name: 'routeA',
     path: '/routeA',
-    component: echo,
+    component: { template: 'routeA' },
     props: (__, context) => {
       throw context.reject('NotFound')
     },
@@ -443,20 +440,17 @@ test('Props from route can trigger reject', async () => {
   const routeB = createRoute({
     name: 'routeB',
     path: '/routeB',
-    component: echo,
-    props: () => ({
-      value: 'routeB',
-    }),
+    component: { template: 'routeB' },
   })
 
   const router = createRouter([routeA, routeB], {
     initialUrl: '/',
   })
 
-  await router.initialized
+  await router.start()
 
   const root = {
-    template: '<Suspense><RouterView/></Suspense>',
+    template: '<RouterView/>',
   }
 
   const app = mount(root, {

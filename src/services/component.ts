@@ -1,5 +1,7 @@
 /* eslint-disable vue/one-component-per-file */
 import { AsyncComponentLoader, Component, FunctionalComponent, defineComponent, h, ref } from 'vue'
+import { useRouter } from '@/compositions/useRouter'
+import { checkCallbackContext } from '@/services/checkCallbackContext'
 import { MaybePromise } from '@/types/utilities'
 
 type Constructor = new (...args: any) => any
@@ -38,10 +40,13 @@ export function component<TComponent extends Component>(component: TComponent, p
     expose: [],
     setup() {
       const values = props()
+      const router = useRouter()
 
       if ('then' in values) {
         return () => h(asyncPropsWrapper(component, values))
       }
+
+      checkCallbackContext(values, router)
 
       return () => h(component, values)
     },
@@ -54,6 +59,7 @@ function asyncPropsWrapper<TComponent extends Component>(component: TComponent, 
     expose: [],
     setup() {
       const values = ref()
+      const router = useRouter()
 
       // eslint-disable-next-line semi-style
       ;(async () => {
@@ -62,6 +68,8 @@ function asyncPropsWrapper<TComponent extends Component>(component: TComponent, 
 
       return () => {
         if (values.value) {
+          checkCallbackContext(values.value, router)
+
           return h(component, values.value)
         }
 
