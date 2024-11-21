@@ -11,7 +11,9 @@ Type safe router for Vue.js
 
 ## Getting Started
 
-Get Started with our [documentation](https://kitbag-router.netlify.app/) or our [intro video](https://kitbag-router.netlify.app/)
+Get Started with our [documentation](https://kitbag-router.netlify.app/)
+
+[![Open in Codeanywhere](https://codeanywhere.com/img/open-in-codeanywhere-btn.svg)](https://app.codeanywhere.com/#https://github.com/kitbagjs/router) or our [intro video](https://kitbag-router.netlify.app/)
 
 ## Installation
 
